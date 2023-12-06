@@ -4,6 +4,7 @@ import networkx as nx
 import torch
 import matplotlib.pyplot as plt
 
+
 # create of function that return adjency matrix
 def adjency_matrix(G: nx.Graph) -> np.ndarray:
     """Create adjency matrix from graph
@@ -73,6 +74,7 @@ def initialize_matrices_normal(V1: int, V2: int) -> tuple[torch.Tensor, torch.Te
     eta = torch.randn(V1, V2, requires_grad=True, dtype=torch.float64)
     sigma = torch.randn(V1, V2, requires_grad=True, dtype=torch.float64)
     return eta, sigma
+
 
 def sqrt_matrix(laplacian_matrix: torch.Tensor) -> torch.Tensor:
     """Compute square root of a matrix with none full rank

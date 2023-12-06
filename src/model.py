@@ -3,7 +3,14 @@ import torch
 import numpy as np
 
 # import local libraries
-from src.utils import adjency_matrix, degree_matrix, sqrt_matrix, initialize_matrices_normal, initialize_matrices_xavier
+from src.utils import (
+    adjency_matrix,
+    degree_matrix,
+    sqrt_matrix,
+    initialize_matrices_normal,
+    initialize_matrices_xavier,
+)
+
 
 def P_C0_KL(X: torch.Tensor, kmax: int) -> torch.Tensor:
     """for even iteration Dykstra algorithm
@@ -69,6 +76,7 @@ def dykstra_operateur(
         P_curr = P_next
 
     return P_curr
+
 
 def compute_cost(
     samples: torch.Tensor,
