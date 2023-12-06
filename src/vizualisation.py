@@ -10,18 +10,18 @@ import numpy as np
 
 
 def visualize_graphs_with_assignment(G1, G2, fixed_positions_G1, fixed_positions_G2, P, with_plot=None, node_labels_G1=None, node_labels_G2=None):
+    """This function visualizes two graphs with node assignments between them.
+
+    Args:
+        G1 (_type_): Graph 1
+        G2 (_type_): Graph 2
+        fixed_positions_G1 (_type_): What are the position if fixed
+        fixed_positions_G2 (_type_): What are the position if fixed
+        P (_type_): list of P
+        with_plot (_type_, optional): Plot or not. Defaults to None.
+        node_labels_G1 (_type_, optional): add labels. Defaults to None.
+        node_labels_G2 (_type_, optional): add labels. Defaults to None.
     """
-    Visualizes two graphs with nodes colored according to the assignment matrix P.
-    Node positions in G1 are calculated and then used for corresponding nodes in G2.
-    
-    :param G1: A NetworkX graph, the smaller graph to which G2 is being aligned.
-    :param G2: A NetworkX graph, the larger graph being aligned to G1.
-    :param P: A numpy array representing the soft assignment matrix from G2 to G1.
-    :param node_labels_G1: Optional dictionary of node labels for G1.
-    :param node_labels_G2: Optional dictionary of node labels for G2.
-    :param fixed_positions: Pre-computed positions for nodes in G1, if already available.
-    """
-    # Compute positions for G1 nodes if not provided
     P = P.detach().numpy().copy()
     
     # Find the best assignment from nodes in G2 to G1 using argmax of matrix P
@@ -31,7 +31,7 @@ def visualize_graphs_with_assignment(G1, G2, fixed_positions_G1, fixed_positions
     colors = plt.cm.rainbow(np.linspace(0, 1, G1.number_of_nodes()))
     
     # Create a color map for G2 nodes based on the assignments to G1 nodes
-    color_map_G2 = ['grey'] * G2.number_of_nodes()  # default color for G2 nodes
+    color_map_G2 = ['grey'] * G2.number_of_nodes() 
         
     for idx, node in enumerate(G2.nodes()):
         # If a node in G2 is assigned to a node in G1, use the same color and position
@@ -56,24 +56,23 @@ def visualize_graphs_with_assignment(G1, G2, fixed_positions_G1, fixed_positions
 
 
 def create_video(G1, G2, P_list, node_labels_G1=None, node_labels_G2=None, filename='graph_evolution.mp4', fixed_positions=None):
+    """This function create a video from batch of plt plots
+
+    Args:
+        G1 (_type_): Grpah 1
+        G2 (_type_): Grpah 2
+        P_list (_type_): List matrices P
+        node_labels_G1 (_type_, optional): add labels. Defaults to None.
+        node_labels_G2 (_type_, optional): add labels. Defaults to None.
+        filename (str, optional): output. Defaults to 'graph_evolution.mp4'.
+        fixed_positions (_type_, optional): want to fix position during training. Defaults to None.
     """
-    Creates a video displaying the evolution of the assignment of nodes in graph G2 to graph G1 over time.
-    
-    :param G1: A NetworkX graph, smaller graph to which G2 is being aligned.
-    :param G2: A NetworkX graph, larger graph being aligned to G1.
-    :param P_list: A list of numpy arrays representing the soft assignment matrices from G2 to G1 over time.
-    :param node_labels_G1: Optional dictionary of node labels for G1.
-    :param node_labels_G2: Optional dictionary of node labels for G2.
-    :param filename: The filename for the saved video.
-    """
-    # List to hold the paths of images
     image_paths = []
     if fixed_positions is None:
         fixed_positions_G1 = nx.spring_layout(G1)
         fixed_positions_G2 = nx.spring_layout(G2)
     for i, P in enumerate(P_list):
         if i % 20 == 0:
-            # Call the visualization function for each matrix P
             visualize_graphs_with_assignment(G1, G2, fixed_positions_G1, fixed_positions_G2, P)
             
             # Save each plot as an image
@@ -82,7 +81,6 @@ def create_video(G1, G2, P_list, node_labels_G1=None, node_labels_G2=None, filen
             image_paths.append(image_path)
             plt.close()  # Close the figure to free memory
 
-    # Create a video from the images
     with imageio.get_writer(filename, mode='I') as writer:
         for image_path in image_paths:
             image = imageio.imread(image_path)
@@ -103,14 +101,10 @@ def draw_graphs_with_edge_color(list_G, with_different_colors=None):
     # Define the spring layout for all graphs
     positions = [nx.spring_layout(G) for G in list_G]
 
-    # Set the figure size more appropriately for individual graphs
     plt.figure(figsize=(6, 12))
-
-    # Create subplots with adjusted figure size
     fig, axs = plt.subplots(2, 2, figsize=(10, 6))
 
     # For the first three graphs, draw nodes and edges that are present in the first graph in blue
-    
     for i, graph in enumerate(list_G[:3]):
         if with_different_colors is not None:
             node_color = ['blue' if node in list_G[0].nodes else 'C0' for node in graph]
@@ -124,10 +118,6 @@ def draw_graphs_with_edge_color(list_G, with_different_colors=None):
     # Draw the last graph with default colors
     nx.draw(list_G[3], pos=positions[3], with_labels=False, ax=axs[1, 1])
     axs[1, 1].set_title("Graph 4")
-
-    # Adjust layout to prevent overlap of subplots' titles and graphs
     plt.tight_layout()
-
-    # Show the plots
     plt.show()
 
