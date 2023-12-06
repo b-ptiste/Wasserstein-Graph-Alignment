@@ -26,7 +26,7 @@ pip install -r requirements.txt
 
 # Some plot illustration the final output of the model
 
-- Evolution of graph aligments
+- Convergence and evolution of graph alignments during learning (each image corresponds to a learning stage)
 
 https://github.com/b-ptiste/Wasserstein-Graph-Alignment/assets/75781257/9bdbf616-458c-401a-ac97-cdf3ea7ed0b7
 
