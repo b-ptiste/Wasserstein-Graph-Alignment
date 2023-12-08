@@ -159,3 +159,122 @@ def draw_graphs_with_edge_color(list_G, with_different_colors=None):
     axs[1, 1].set_title("Graph 4")
     plt.tight_layout()
     plt.show()
+
+
+def visualize_graphs_with_soft_assignment(
+    G1,
+    G2,
+    fixed_positions_G1,
+    fixed_positions_G2,
+    P,
+    with_plot=None,
+    node_labels_G1=None,
+    node_labels_G2=None,
+):
+    """Visualize two graphs with soft assignments as pie charts on nodes of G2 and colored nodes in G1.
+
+    Args:
+        G1 (networkx.Graph): Graph 1.
+        G2 (networkx.Graph): Graph 2.
+        fixed_positions_G1 (dict): Node positions for G1.
+        fixed_positions_G2 (dict): Node positions for G2.
+        P (np.ndarray): Assignment matrix P, with shape (n_G1, n_G2).
+        with_plot (bool): If True, show the plot.
+        node_labels_G1 (dict): Labels for the nodes of G1.
+        node_labels_G2 (dict): Labels for the nodes of G2.
+    """
+    # detach P from the computation graph and convert to numpy array
+    P = P.detach().numpy().copy()
+    # Create a figure for the graphs
+    fig, ax = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Generate colors for each node in G1
+    colors = plt.cm.rainbow(np.linspace(0, 1, G1.number_of_nodes()))
+
+    # Draw G1 with fixed positions and colored nodes
+    nx.draw_networkx(
+        G1,
+        pos=fixed_positions_G1,
+        ax=ax[0],
+        with_labels=True,
+        node_color=colors,
+        labels=node_labels_G1,
+    )
+    ax[0].set_title("Graph G1")
+
+    # Draw G2 with fixed positions but no node colors yet (we will add pie charts instead)
+    nx.draw_networkx_edges(G2, pos=fixed_positions_G2, ax=ax[1])
+    nx.draw_networkx_labels(G2, pos=fixed_positions_G2, labels=node_labels_G2, ax=ax[1])
+    ax[1].set_title("Graph G2 with Soft Assignments")
+
+    # Function to add pie charts to nodes in G2
+    def add_pie_charts_to_nodes(ax, positions, assignment_matrix):
+        for node in positions:
+            pie_size = 0.1  # Size of the pie charts
+            trans = ax.transData.transform(
+                positions[node]
+            )  # Data to display coordinates
+            trans = fig.transFigure.inverted().transform(
+                trans
+            )  # Display to figure coordinates
+            pie_ax = fig.add_axes(
+                [trans[0] - pie_size / 2, trans[1] - pie_size / 2, pie_size, pie_size],
+                aspect="equal",
+            )
+            pie_ax.set_xticks([])
+            pie_ax.set_yticks([])
+            probabilities = assignment_matrix[:, node]
+            pie_ax.pie(probabilities, colors=colors)
+
+    # Add pie charts to nodes in G2
+    add_pie_charts_to_nodes(ax[1], fixed_positions_G2, P)
+
+    # Show the plot if requested
+    if with_plot is not None:
+        plt.show()
+
+
+def create_video_soft(
+    G1,
+    G2,
+    P_list,
+    node_labels_G1=None,
+    node_labels_G2=None,
+    filename="graph_evolution.mp4",
+    fixed_positions=None,
+):
+    """This function create a video from batch of plt plots
+
+    Args:
+        G1 (_type_): Grpah 1
+        G2 (_type_): Grpah 2
+        P_list (_type_): List matrices P
+        node_labels_G1 (_type_, optional): add labels. Defaults to None.
+        node_labels_G2 (_type_, optional): add labels. Defaults to None.
+        filename (str, optional): output. Defaults to 'graph_evolution.mp4'.
+        fixed_positions (_type_, optional): want to fix position during training. Defaults to None.
+    """
+    image_paths = []
+    if fixed_positions is None:
+        fixed_positions_G1 = nx.spring_layout(G1)
+        fixed_positions_G2 = nx.spring_layout(G2)
+    for i, P in enumerate(P_list):
+        if i % 20 == 0:
+            visualize_graphs_with_soft_assignment(
+                G1, G2, fixed_positions_G1, fixed_positions_G2, P
+            )
+
+            # Save each plot as an image
+            image_path = f"/tmp/graph_{i}.png"
+            plt.savefig(image_path)
+            image_paths.append(image_path)
+            plt.close()  # Close the figure to free memory
+
+    with imageio.get_writer(filename, mode="I") as writer:
+        for image_path in image_paths:
+            image = imageio.imread(image_path)
+            writer.append_data(image)
+
+    # Optionally, remove the images after creating the video
+    for image_path in image_paths:
+        os.remove(image_path)
