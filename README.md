@@ -28,7 +28,15 @@ pip install -r requirements.txt
 
 - Convergence and evolution of graph alignments during learning (each image corresponds to a learning stage)
 
-https://github.com/b-ptiste/Wasserstein-Graph-Alignment/assets/75781257/9bdbf616-458c-401a-ac97-cdf3ea7ed0b7
+Hard-assigment : 
+
+https://github.com/b-ptiste/Wasserstein-Graph-Alignment/assets/75781257/af76b30d-5be8-49c2-bde9-27b7c2b607f3
+
+Soft-assigment : 
+
+https://github.com/b-ptiste/Wasserstein-Graph-Alignment/assets/75781257/387524a4-9c26-4ecc-97e4-2e352640adc8
+
+
 
 - Experimental results comparing the distance between well-chosen graphs 
 
