@@ -82,6 +82,7 @@ def create_video(
     node_labels_G2=None,
     filename="graph_evolution.mp4",
     fixed_positions=None,
+    fixed_positions_G2=None,
 ):
     """This function create a video from batch of plt plots
 
@@ -97,7 +98,8 @@ def create_video(
     image_paths = []
     if fixed_positions is None:
         fixed_positions_G1 = nx.spring_layout(G1)
-        fixed_positions_G2 = nx.spring_layout(G2)
+        if fixed_positions_G2 is None:
+            fixed_positions_G2 = nx.spring_layout(G2)
     for i, P in enumerate(P_list):
         if i % 20 == 0:
             visualize_graphs_with_assignment(
@@ -278,3 +280,5 @@ def create_video_soft(
     # Optionally, remove the images after creating the video
     for image_path in image_paths:
         os.remove(image_path)
+
+    return fixed_positions_G2
