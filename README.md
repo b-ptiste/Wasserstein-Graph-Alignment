@@ -4,7 +4,7 @@
 - TOCQUEC Louis (MVA): louis.tocquec@ens-paris-saclay.fr
 
 # Wasserstein-Graph-Alignment
-The project was carried out as part of Jean Feydy's [Geometric data analysis course](see. https://www.jeanfeydy.com/Teaching/index.html) in the Master MVA (ENS Paris Saclay).
+The project was carried out as part of Jean Feydy's [Geometric data analysis course](https://www.jeanfeydy.com/Teaching/index.html) in the Master MVA (ENS Paris Saclay).
 We studied and re-implemented from scratch the "Wassertein-based graph alignment" paper, whose code is not available in open source.
 
 The idea of this paper is to propose a method for aligning graphs of different sizes using optimal transport methods. Their method, although non-convex, can be optimised using gradient decadence and they have proposed a new derivable Dykstra operator.
